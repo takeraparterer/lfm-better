@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  # OpenTelemetry Collector - receives and processes telemetry
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.108.0
+    command: ["--config=/etc/otel/otel-collector-config.yaml"]
+    ports:
+      - "4317:4317"    # gRPC OTLP receiver
+      - "4318:4318"    # HTTP OTLP receiver
+      - "8889:8889"    # Prometheus metrics
+      - "13133:13133"  # Health check
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel/otel-collector-config.yaml:ro
+    environment:
+      - GOGC=80
+    restart: unless-stopped
+    networks:
+      - otel-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:13133/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Python telemetry demo application
+  otel-demo:
+    build:
+      context: .
+      dockerfile: Dockerfile.otel
+    depends_on:
+      otel-collector:
+        condition: service_healthy
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4317"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "lfm-demo"
+      OTEL_RESOURCE_ATTRIBUTES: "service.name=lfm-demo,project.owner=Keith Luton,framework=Luton Field Model"
+    networks:
+      - otel-network
+    restart: "no"
+
+networks:
+  otel-network:
+    driver: bridge
