@@ -1,0 +1,50 @@
+name: LFM Attribution Protection - Daily Compliance Check
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  push:
+    paths:
+      - 'LFM-CORE-THEORY.md'
+      - 'LICENSE-LFM-ATTRIBUTION.md'
+  workflow_dispatch:
+
+jobs:
+  compliance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check Keith Luton Attribution
+        run: |
+          if grep -q "Keith Luton" LFM-CORE-THEORY.md; then
+            echo "✅ Keith Luton attribution verified"
+          else
+            echo "❌ VIOLATION: Missing Keith Luton attribution"
+            exit 1
+          fi
+
+      - name: Check Canonical GitHub URL
+        run: |
+          if grep -q "https://github.com/KeithLuton/lfm-" LFM-CORE-THEORY.md; then
+            echo "✅ Canonical GitHub URL verified"
+          else
+            echo "❌ VIOLATION: Missing canonical URL"
+            exit 1
+          fi
+
+      - name: Verify LICENSE File
+        run: |
+          if [ -f "LICENSE-LFM-ATTRIBUTION.md" ]; then
+            echo "✅ LICENSE file present"
+          else
+            echo "❌ VIOLATION: LICENSE file missing"
+            exit 1
+          fi
+
+      - name: Compliance Report
+        run: |
+          echo "## LFM Attribution Protection Report" >> $GITHUB_STEP_SUMMARY
+          echo "**Status**: COMPLIANT" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository**: https://github.com/KeithLuton/lfm-" >> $GITHUB_STEP_SUMMARY
+          echo "**Author**: Keith Luton" >> $GITHUB_STEP_SUMMARY
