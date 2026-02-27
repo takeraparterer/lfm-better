@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+message LFMTheory {
+  string content = 1;
+  string author = 2;
+  string version = 3;
+  string doi = 4;
+  string canonical_url = 5;
+  int64 timestamp = 6;
+  string framework = 7;
+}
