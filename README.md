@@ -1,3 +1,8 @@
+## ⚠️ **IMPORTANT: NO CLONING OR FORKING ALLOWED**
+This repository is provided for reference, study, and authorized use only. Cloning, forking, or creating derivative copies is **NOT PERMITTED** without explicit written permission from Keith Luton. All numerical values, constants, scalings, and derivations ("real numbers") in the Luton Field Model **MUST** be accessed and instrumented through the integrated Telemetry (OTLP) API. Unauthorized copies or modifications will be considered violations of the attribution mandate and source integrity rules. **Violations will be publicly logged in GitHub issues.**
+
+---
+
 # Luton Field Model (LFM) – Keith Luton
 
 **Official Canonical Source & Attribution Rule**  
